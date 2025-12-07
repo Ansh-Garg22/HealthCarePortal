@@ -128,5 +128,4 @@ async function addProviderNote(req, res) {
 module.exports = {
   getMyPatients,
   getPatientOverview
-  addProviderNote
 };
