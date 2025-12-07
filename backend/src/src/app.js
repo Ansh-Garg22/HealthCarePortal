@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const { errorHandler, notFoundHandler } = require('./middleware/errorMiddleware');
 
 const authRoutes = require('./routes/auth.routes');
 const patientRoutes = require('./routes/patient.routes');
@@ -10,17 +9,29 @@ const reminderRoutes = require('./routes/reminders.routes');
 const healthTipRoutes = require('./routes/healthtips.routes');
 const adminRoutes = require('./routes/admin.routes');
 
+const { errorHandler, notFoundHandler } = require('./middleware/errorMiddleware');
+
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true
+  })
+);
 app.use(express.json());
 
-// Health-check
+// root
+app.get('/', (req, res) => {
+  res.json({ message: 'Health portal backend running', timestamp: new Date().toISOString() });
+});
+
+// health-check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Route mounts (implement later)
+// routes
 app.use('/api/auth', authRoutes);
 app.use('/api/patient', patientRoutes);
 app.use('/api/provider', providerRoutes);
@@ -29,7 +40,7 @@ app.use('/api/reminders', reminderRoutes);
 app.use('/api/healthtips', healthTipRoutes);
 app.use('/api/admin', adminRoutes);
 
-// 404 + error handler
+// error handlers last
 app.use(notFoundHandler);
 app.use(errorHandler);
 
